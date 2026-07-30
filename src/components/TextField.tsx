@@ -13,33 +13,48 @@ type Props = TextInputProps & {
   error?: string;
 };
 
-export function TextField({ label, error, style, ...rest }: Props) {
+export function TextField({ label, error, style, editable = true, ...rest }: Props) {
   const theme = useTheme();
+  const labelId = label ? `${label.replace(/\s+/g, '-').toLowerCase()}-label` : undefined;
+
   return (
-    <View style={styles.wrap}>
+    <View style={[styles.wrap, { gap: theme.spacing[1.5] }]}>
       {label ? (
-        <Text variant="caption" muted style={styles.label}>
+        <Text variant="caption" muted nativeID={labelId} style={{ marginLeft: theme.spacing[0.5] }}>
           {label}
         </Text>
       ) : null}
       <TextInput
+        accessibilityLabel={label ?? rest.placeholder}
+        accessibilityLabelledBy={labelId}
+        accessibilityState={{ disabled: !editable }}
+        editable={editable}
         placeholderTextColor={theme.colors.mutedForeground}
         style={[
-          styles.input,
           {
             backgroundColor: theme.colors.card,
             borderColor: error ? theme.colors.destructive : theme.colors.border,
             color: theme.colors.foreground,
             borderRadius: theme.radius.md,
             fontFamily: theme.typography.body.fontFamily,
-            minHeight: 48,
+            fontSize: theme.typography.body.fontSize,
+            minHeight: theme.sizes.control,
+            borderWidth: 1,
+            paddingHorizontal: theme.spacing[3.5],
+            paddingVertical: theme.spacing[3],
+            opacity: editable ? 1 : 0.6,
           },
           style,
         ]}
         {...rest}
       />
       {error ? (
-        <Text variant="caption" color={theme.colors.destructive}>
+        <Text
+          variant="caption"
+          tone="destructive"
+          accessibilityLiveRegion="polite"
+          accessibilityRole="alert"
+        >
           {error}
         </Text>
       ) : null}
@@ -48,12 +63,5 @@ export function TextField({ label, error, style, ...rest }: Props) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: 6 },
-  label: { marginLeft: 2 },
-  input: {
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 16,
-  },
+  wrap: {},
 });

@@ -21,7 +21,7 @@ export function SearchBar({
   return (
     <Pressable
       accessibilityRole="search"
-      accessibilityLabel="Search"
+      accessibilityLabel={value ? `Search: ${value}` : 'Search'}
       onPress={onPress}
       style={[
         styles.bar,
@@ -29,11 +29,14 @@ export function SearchBar({
           backgroundColor: theme.colors.card,
           borderColor: theme.colors.border,
           borderRadius: theme.radius.lg,
-          minHeight: 48,
+          minHeight: theme.sizes.control,
+          gap: theme.spacing[2.5],
+          paddingHorizontal: theme.spacing[3.5],
+          borderWidth: 1,
         },
       ]}
     >
-      <Ionicons name="search" size={20} color={theme.colors.mutedForeground} />
+      <Ionicons name="search" size={theme.sizes.iconMd} color={theme.colors.mutedForeground} />
       <Text
         variant="body"
         color={value ? theme.colors.foreground : theme.colors.mutedForeground}
@@ -47,7 +50,7 @@ export function SearchBar({
           <Ionicons name="close-circle" size={18} color={theme.colors.mutedForeground} />
         </Pressable>
       ) : (
-        <View />
+        <View style={{ width: 18 }} />
       )}
     </Pressable>
   );
@@ -57,9 +60,6 @@ const styles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: 14,
-    borderWidth: 1,
   },
   text: { flex: 1 },
 });

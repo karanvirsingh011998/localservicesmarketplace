@@ -2,15 +2,30 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen, Chip, Button } from '@/components';
+import { useTheme } from '@/theme/ThemeProvider';
 
-const filters = ['Distance', 'Rating 4+', 'Price', 'Availability', 'Emergency', 'Verified', 'Experience', 'Offers'];
+const filters = [
+  'Distance',
+  'Rating 4+',
+  'Price',
+  'Availability',
+  'Emergency',
+  'Verified',
+  'Experience',
+  'Offers',
+];
 
 export default function Filters() {
   const [selected, setSelected] = useState(['Distance']);
   const router = useRouter();
+  const theme = useTheme();
   return (
-    <Screen title="Filters" onBack>
-      <View style={styles.row}>
+    <Screen
+      title="Filters"
+      onBack
+      footer={<Button title="Apply" onPress={() => router.back()} />}
+    >
+      <View style={[styles.row, { gap: theme.spacing[2] }]}>
         {filters.map((f) => (
           <Chip
             key={f}
@@ -22,8 +37,10 @@ export default function Filters() {
           />
         ))}
       </View>
-      <Button title="Apply" onPress={() => router.back()} />
     </Screen>
   );
 }
-const styles = StyleSheet.create({ row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 } });
+
+const styles = StyleSheet.create({
+  row: { flexDirection: 'row', flexWrap: 'wrap' },
+});

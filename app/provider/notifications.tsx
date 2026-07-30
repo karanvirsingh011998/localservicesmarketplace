@@ -1,13 +1,28 @@
 import React from 'react';
-import { useRouter } from 'expo-router';
-import { Screen, Text, Button } from '@/components';
+import { View } from 'react-native';
+import { Screen, Text, Card, EmptyState } from '@/components';
+import { useTheme } from '@/theme/ThemeProvider';
 
-export default function Page() {
-  const router = useRouter();
+const items = [
+  ['New booking request', 'Emergency Plumber · BTM'],
+  ['Payout processed', '₹5,000 sent to your bank'],
+  ['Review received', 'Meera rated you 5 stars'],
+];
+
+export default function ProviderNotifications() {
+  const theme = useTheme();
   return (
     <Screen title="Notifications" onBack>
-      <Text variant="body" muted>Job alerts and payout updates.</Text>
-
+      {items.length === 0 ? (
+        <EmptyState title="All caught up" />
+      ) : (
+        items.map(([t, s]) => (
+          <Card key={t}>
+            <Text variant="title">{t}</Text>
+            <Text variant="caption" muted>{s}</Text>
+          </Card>
+        ))
+      )}
     </Screen>
   );
 }

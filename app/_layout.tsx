@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
   useFonts,
@@ -27,7 +28,10 @@ function RootStack() {
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: theme.colors.background },
-          animation: 'fade',
+          animation: theme.reduceMotion ? 'none' : 'slide_from_right',
+          animationDuration: theme.motion.screenMs,
+          gestureEnabled: true,
+          fullScreenGestureEnabled: true,
         }}
       />
     </>
@@ -58,9 +62,11 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.flex}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <ToastProvider>
-            <RootStack />
-          </ToastProvider>
+          <BottomSheetModalProvider>
+            <ToastProvider>
+              <RootStack />
+            </ToastProvider>
+          </BottomSheetModalProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

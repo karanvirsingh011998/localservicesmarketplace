@@ -1,13 +1,14 @@
 import React from 'react';
-import { useRouter } from 'expo-router';
-import { Screen, Text, Button } from '@/components';
+import { Screen, Text } from '@/components';
 
-export default function Page() {
-  const router = useRouter();
+export default function About() {
   return (
     <Screen title="About QuickFix" onBack>
-      <Text variant="body" muted>UI-only demo of a local services marketplace.</Text>
-
+      <Text variant="h3">QuickFix</Text>
+      <Text variant="body" muted>
+        A premium local services marketplace UI demo. Browse categories, book pros, chat, and manage provider jobs — all with mock data and no backend.
+      </Text>
+      <Text variant="caption" muted>Version 1.0.0 · UI-only</Text>
     </Screen>
   );
 }

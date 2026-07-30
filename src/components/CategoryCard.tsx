@@ -1,7 +1,8 @@
-import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import React, { memo } from 'react';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/ThemeProvider';
+import { withAlpha } from '@/theme/tokens';
 import { Text } from './Text';
 import type { Category } from '@/mocks/data';
 
@@ -15,15 +16,40 @@ const iconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
   tv: 'tv',
   bug: 'bug',
   'alert-circle': 'alert-circle',
+  home: 'home',
+  construct: 'construct',
+  laptop: 'laptop-outline',
+  business: 'business',
+  leaf: 'leaf',
+  car: 'car',
+  cut: 'cut',
+  fitness: 'fitness',
+  school: 'school',
+  camera: 'camera',
+  paw: 'paw',
+  people: 'people',
+  briefcase: 'briefcase',
+  document: 'document-text',
+  shield: 'shield-checkmark',
+  storefront: 'storefront',
+  shirt: 'shirt',
+  bicycle: 'bicycle',
+  homeOutline: 'home-outline',
+  sparklesOutline: 'sparkles-outline',
+  hardwareChip: 'hardware-chip',
+  globe: 'globe',
+  medkit: 'medkit',
 };
 
 type Props = {
   category: Category;
   onPress?: () => void;
+  compact?: boolean;
 };
 
-export function CategoryCard({ category, onPress }: Props) {
+function CategoryCardComponent({ category, onPress, compact }: Props) {
   const theme = useTheme();
+  const width = compact ? undefined : 88;
   return (
     <Pressable
       onPress={onPress}
@@ -32,17 +58,30 @@ export function CategoryCard({ category, onPress }: Props) {
       style={({ pressed }) => [
         styles.card,
         {
+          width: compact ? '23%' : width,
+          minWidth: compact ? undefined : 80,
+          padding: theme.spacing[3],
           backgroundColor: theme.colors.card,
           borderRadius: theme.radius.lg,
           opacity: pressed ? 0.9 : 1,
-          transform: [{ scale: pressed ? 0.97 : 1 }],
+          transform: [{ scale: pressed && !theme.reduceMotion ? 0.97 : 1 }],
+          gap: theme.spacing[2],
         },
       ]}
     >
-      <View style={[styles.icon, { backgroundColor: `${category.color}22` }]}>
+      <View
+        style={{
+          width: theme.sizes.avatarLg - 8,
+          height: theme.sizes.avatarLg - 8,
+          borderRadius: theme.radius.pill,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: withAlpha(category.color, 0.14),
+        }}
+      >
         <Ionicons
           name={iconMap[category.icon] ?? 'grid'}
-          size={22}
+          size={theme.sizes.iconLg}
           color={category.color}
         />
       </View>
@@ -53,19 +92,11 @@ export function CategoryCard({ category, onPress }: Props) {
   );
 }
 
+export const CategoryCard = memo(CategoryCardComponent);
+
 const styles = StyleSheet.create({
   card: {
-    width: 88,
-    padding: 12,
     alignItems: 'center',
-    gap: 8,
-  },
-  icon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   label: { textAlign: 'center' },
 });

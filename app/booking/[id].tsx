@@ -1,50 +1,90 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Screen, Text, Badge, Button, Divider } from '@/components';
+import {
+  Screen,
+  Text,
+  Badge,
+  Button,
+  Divider,
+  StatusTimeline,
+  Modal,
+} from '@/components';
 import { bookings } from '@/mocks/data';
 import { useTheme } from '@/theme/ThemeProvider';
 
-const timeline = [
-  'Booking placed',
-  'Provider accepted',
-  'Provider on the way',
-  'Service started',
-  'Service completed',
-];
+const STATUS_STEPS: Record<string, number> = {
+  pending: 0,
+  accepted: 1,
+  in_progress: 3,
+  completed: 4,
+  cancelled: -1,
+};
 
 export default function BookingDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const booking = bookings.find((b) => b.id === id) || bookings[0];
   const router = useRouter();
   const theme = useTheme();
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const doneUntil = STATUS_STEPS[booking.status] ?? 0;
+
+  const events = useMemo(
+    () =>
+      [
+        'Booking placed',
+        'Provider accepted',
+        'Provider on the way',
+        'Service started',
+        'Service completed',
+      ].map((label, i) => ({ label, done: doneUntil >= 0 && i <= doneUntil })),
+    [doneUntil],
+  );
+
   return (
     <Screen title="Booking details" onBack>
       <View style={styles.row}>
-        <Text variant="h4" style={{ flex: 1 }}>{booking.serviceName}</Text>
+        <Text variant="h4" style={{ flex: 1 }}>
+          {booking.serviceName}
+        </Text>
         <Badge label={booking.status.replace('_', ' ')} />
       </View>
       <Text variant="body">{booking.providerName}</Text>
-      <Text variant="caption" muted>{booking.date} · {booking.time}</Text>
-      <Text variant="caption" muted>{booking.address}</Text>
+      <Text variant="caption" muted>
+        {booking.date} · {booking.time}
+      </Text>
+      <Text variant="caption" muted>
+        {booking.address}
+      </Text>
       <Text variant="title">₹{booking.price}</Text>
       <Divider />
       <Text variant="h4">Timeline</Text>
-      {timeline.map((step, i) => (
-        <View key={step} style={styles.step}>
-          <View style={[styles.dot, { backgroundColor: i < 3 ? theme.colors.primary : theme.colors.border }]} />
-          <Text variant="body" muted={i >= 3}>{step}</Text>
-        </View>
-      ))}
+      <StatusTimeline events={events} />
       <Button title="Chat" onPress={() => router.push('/chat/m1')} />
-      <Button title="Reschedule" variant="secondary" onPress={() => router.push(`/booking/reschedule?id=${booking.id}`)} />
-      <Button title="Cancel" variant="ghost" onPress={() => router.push(`/booking/cancel?id=${booking.id}`)} />
-      <Button title="Active booking view" variant="ghost" onPress={() => router.push('/booking/active')} />
+      <Button
+        title="Reschedule"
+        variant="secondary"
+        onPress={() => router.push('/booking/reschedule')}
+      />
+      <Button title="Cancel booking" variant="ghost" onPress={() => setCancelOpen(true)} />
+      <Modal visible={cancelOpen} title="Cancel booking?" onClose={() => setCancelOpen(false)}>
+        <Text variant="body" muted>
+          Are you sure you want to cancel this booking?
+        </Text>
+        <Button
+          title="Yes, cancel"
+          variant="destructive"
+          onPress={() => {
+            setCancelOpen(false);
+            router.push('/booking/cancel');
+          }}
+        />
+        <Button title="Keep booking" variant="ghost" onPress={() => setCancelOpen(false)} />
+      </Modal>
     </Screen>
   );
 }
+
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  step: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 },
-  dot: { width: 10, height: 10, borderRadius: 5 },
 });

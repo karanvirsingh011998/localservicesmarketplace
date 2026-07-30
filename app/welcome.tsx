@@ -12,20 +12,23 @@ export default function Welcome() {
   const setRole = useAppStore((s) => s.setRole);
 
   return (
-    <Screen scroll={false} padded={false}>
-      <LinearGradient
-        colors={[theme.colors.primary, '#0B1220']}
-        style={styles.hero}
-      >
-        <Text variant="display" color="#fff">
+    <Screen scroll={false} padded={false} edges={['top', 'bottom']}>
+      <LinearGradient colors={[theme.colors.primary, '#0B1220']} style={styles.hero}>
+        <Text variant="display" color={theme.colors.primaryForeground}>
           QuickFix
         </Text>
-        <Text variant="subtitle" color="#E2E8F0">
+        <Text variant="subtitle" color={theme.colors.primaryForeground}>
           Home services marketplace
         </Text>
       </LinearGradient>
-      <View style={styles.actions}>
-        <Button title="Continue as guest" onPress={() => { setRole('guest'); router.replace('/(guest)'); }} />
+      <View style={[styles.actions, { padding: theme.spacing[6], gap: theme.spacing[3] }]}>
+        <Button
+          title="Continue as guest"
+          onPress={() => {
+            setRole('guest');
+            router.replace('/(guest)');
+          }}
+        />
         <Button title="Sign in" variant="secondary" onPress={() => router.push('/auth/login')} />
         <Button title="Create account" variant="ghost" onPress={() => router.push('/auth/register')} />
         <Button title="Choose role" variant="ghost" onPress={() => router.push('/select-role')} />
@@ -36,5 +39,5 @@ export default function Welcome() {
 
 const styles = StyleSheet.create({
   hero: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8, padding: 24 },
-  actions: { padding: 24, gap: 12 },
+  actions: {},
 });

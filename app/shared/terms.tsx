@@ -1,13 +1,12 @@
 import React from 'react';
-import { useRouter } from 'expo-router';
-import { Screen, Text, Button } from '@/components';
+import { Screen, Text } from '@/components';
 
-export default function Page() {
-  const router = useRouter();
+export default function Terms() {
   return (
     <Screen title="Terms & Conditions" onBack>
-      <Text variant="body" muted>Placeholder terms for the UI demo.</Text>
-
+      <Text variant="body" muted>
+        Placeholder terms for the QuickFix UI demo. Bookings, payments, and chat are simulated and do not create real obligations.
+      </Text>
     </Screen>
   );
 }

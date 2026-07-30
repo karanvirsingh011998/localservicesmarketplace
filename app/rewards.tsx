@@ -1,13 +1,31 @@
 import React from 'react';
+import { Screen, Text, Button, Card, ListRow } from '@/components';
 import { useRouter } from 'expo-router';
-import { Screen, Text, Button } from '@/components';
+import { useTheme } from '@/theme/ThemeProvider';
 
-export default function Page() {
+export default function Rewards() {
   const router = useRouter();
+  const theme = useTheme();
   return (
     <Screen title="Rewards" onBack>
-      <Text variant="body" muted>You have 420 reward points (mock).</Text>
-      <Button title="Refer & earn" variant="ghost" onPress={() => router.push('/refer' as any)} />
+      <Card
+        style={{
+          backgroundColor: theme.colors.primary,
+          gap: theme.spacing[2],
+        }}
+      >
+        <Text variant="caption" color={theme.colors.primaryForeground}>
+          Available points
+        </Text>
+        <Text variant="display" color={theme.colors.primaryForeground}>
+          420
+        </Text>
+      </Card>
+      <Text variant="body" muted>
+        Earn points on completed bookings. Redeem on your next visit (mock).
+      </Text>
+      <ListRow title="Refer & earn" subtitle="Invite friends for bonus points" icon="gift-outline" onPress={() => router.push('/refer')} />
+      <Button title="Browse services" variant="secondary" onPress={() => router.push('/service')} />
     </Screen>
   );
 }

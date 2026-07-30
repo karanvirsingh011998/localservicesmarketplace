@@ -1,65 +1,25 @@
 import React from 'react';
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/theme/ThemeProvider';
+import { RoleTabs } from '@/components/RoleTabs';
+import { threads } from '@/mocks/data';
+
+const unread = threads.reduce((n, t) => n + t.unread, 0);
 
 export default function Layout() {
-  const theme = useTheme();
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.mutedForeground,
-        tabBarStyle: {
-          backgroundColor: theme.colors.card,
-          borderTopColor: theme.colors.border,
-          height: 64,
-          paddingBottom: 8,
-          paddingTop: 6,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="discover"
-        options={{
-          title: 'Discover',
-          tabBarLabel: 'Discover',
-          tabBarIcon: ({ color, size }) => <Ionicons name="compass" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="bookings"
-        options={{
-          title: 'Bookings',
-          tabBarLabel: 'Bookings',
-          tabBarIcon: ({ color, size }) => <Ionicons name="calendar" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="messages"
-        options={{
+    <RoleTabs
+      tabs={[
+        { name: 'index', title: 'Home', icon: 'home', iconOutline: 'home-outline' },
+        { name: 'discover', title: 'Discover', icon: 'compass', iconOutline: 'compass-outline' },
+        { name: 'bookings', title: 'Bookings', icon: 'calendar', iconOutline: 'calendar-outline' },
+        {
+          name: 'messages',
           title: 'Messages',
-          tabBarLabel: 'Messages',
-          tabBarIcon: ({ color, size }) => <Ionicons name="chatbubbles" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person" color={color} size={size} />,
-        }}
-      />
-    </Tabs>
+          icon: 'chatbubbles',
+          iconOutline: 'chatbubbles-outline',
+          badge: unread || undefined,
+        },
+        { name: 'profile', title: 'Profile', icon: 'person', iconOutline: 'person-outline' },
+      ]}
+    />
   );
 }

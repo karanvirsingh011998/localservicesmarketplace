@@ -1,6 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+  FadeIn,
+} from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Text } from './Text';
 import { Button } from './Button';
@@ -13,10 +21,21 @@ type EmptyProps = {
   onAction?: () => void;
 };
 
-export function EmptyState({ title, subtitle, icon = 'file-tray-outline', actionLabel, onAction }: EmptyProps) {
+export function EmptyState({
+  title,
+  subtitle,
+  icon = 'file-tray-outline',
+  actionLabel,
+  onAction,
+}: EmptyProps) {
   const theme = useTheme();
   return (
-    <View style={styles.wrap} accessibilityRole="summary">
+    <Animated.View
+      entering={theme.reduceMotion ? undefined : FadeIn}
+      style={[styles.wrap, { padding: theme.spacing[8], gap: theme.spacing[3] }]}
+      accessible
+      accessibilityLabel={`${title}. ${subtitle ?? ''}`}
+    >
       <Ionicons name={icon} size={48} color={theme.colors.mutedForeground} />
       <Text variant="title" style={styles.center}>
         {title}
@@ -27,7 +46,7 @@ export function EmptyState({ title, subtitle, icon = 'file-tray-outline', action
         </Text>
       ) : null}
       {actionLabel && onAction ? <Button title={actionLabel} onPress={onAction} /> : null}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -51,25 +70,56 @@ export function ErrorState({
   );
 }
 
-export function LoadingSkeleton({ height = 120 }: { height?: number }) {
+export function LoadingSkeleton({
+  height = 120,
+  count = 1,
+}: {
+  height?: number;
+  count?: number;
+}) {
   const theme = useTheme();
+  const translateX = useSharedValue(-180);
+  useEffect(() => {
+    if (theme.reduceMotion) return;
+    translateX.value = withRepeat(withTiming(520, { duration: 1100 }), -1, false);
+  }, [theme.reduceMotion, translateX]);
+  const shimmerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
   return (
-    <View
-      accessibilityLabel="Loading"
-      style={[
-        styles.skeleton,
-        {
-          height,
-          backgroundColor: theme.colors.muted,
-          borderRadius: theme.radius.lg,
-        },
-      ]}
-    />
+    <View style={{ gap: theme.spacing[3] }} accessibilityLabel="Loading" accessibilityRole="progressbar">
+      {Array.from({ length: count }).map((_, i) => (
+        <Animated.View
+          key={i}
+          style={[
+            {
+              height,
+              width: '100%',
+              backgroundColor: theme.colors.muted,
+              borderRadius: theme.radius.lg,
+              overflow: 'hidden',
+            },
+          ]}
+        >
+          {!theme.reduceMotion ? (
+            <Animated.View style={[styles.shimmer, shimmerStyle]}>
+              <LinearGradient
+                colors={['transparent', theme.colors.card, 'transparent']}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={StyleSheet.absoluteFill}
+              />
+            </Animated.View>
+          ) : null}
+        </Animated.View>
+      ))}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 },
+  wrap: { alignItems: 'center', justifyContent: 'center' },
   center: { textAlign: 'center' },
-  skeleton: { width: '100%', opacity: 0.7 },
+  shimmer: { position: 'absolute', top: 0, bottom: 0, width: 160 },
 });

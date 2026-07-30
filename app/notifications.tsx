@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Screen, Text } from '@/components';
+import { Screen, Text, Card, EmptyState } from '@/components';
 import { useTheme } from '@/theme/ThemeProvider';
 
 const items = [
@@ -13,13 +12,18 @@ export default function Notifications() {
   const theme = useTheme();
   return (
     <Screen title="Notifications" onBack>
-      {items.map(([t, s]) => (
-        <View key={t} style={[styles.card, { backgroundColor: theme.colors.card, borderRadius: theme.radius.lg }]}>
-          <Text variant="title">{t}</Text>
-          <Text variant="caption" muted>{s}</Text>
-        </View>
-      ))}
+      {items.length === 0 ? (
+        <EmptyState title="No notifications" />
+      ) : (
+        items.map(([t, s]) => (
+          <Card key={t} accessibilityLabel={`${t}. ${s}`}>
+            <Text variant="title">{t}</Text>
+            <Text variant="caption" muted>
+              {s}
+            </Text>
+          </Card>
+        ))
+      )}
     </Screen>
   );
 }
-const styles = StyleSheet.create({ card: { padding: 14, gap: 4 } });

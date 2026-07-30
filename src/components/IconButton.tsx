@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -10,6 +10,7 @@ type Props = {
   color?: string;
   accessibilityLabel: string;
   variant?: 'ghost' | 'filled';
+  disabled?: boolean;
 };
 
 export function IconButton({
@@ -19,32 +20,31 @@ export function IconButton({
   color,
   accessibilityLabel,
   variant = 'ghost',
+  disabled,
 }: Props) {
   const theme = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       onPress={onPress}
       hitSlop={8}
       style={({ pressed }) => [
-        styles.btn,
         {
+          alignItems: 'center',
+          justifyContent: 'center',
           backgroundColor:
-            variant === 'filled' ? theme.colors.muted : pressed ? theme.colors.muted : 'transparent',
+            variant === 'filled' || pressed ? theme.colors.muted : 'transparent',
           borderRadius: theme.radius.pill,
-          minWidth: 44,
-          minHeight: 44,
+          minWidth: theme.sizes.touch,
+          minHeight: theme.sizes.touch,
+          opacity: disabled ? 0.4 : 1,
         },
       ]}
     >
-      <View>
-        <Ionicons name={name} size={size} color={color ?? theme.colors.foreground} />
-      </View>
+      <Ionicons name={name} size={size} color={color ?? theme.colors.foreground} />
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  btn: { alignItems: 'center', justifyContent: 'center' },
-});

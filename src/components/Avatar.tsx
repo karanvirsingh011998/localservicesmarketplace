@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Text } from './Text';
@@ -11,6 +11,7 @@ type Props = {
 
 export function Avatar({ uri, name, size = 40 }: Props) {
   const theme = useTheme();
+  const [failed, setFailed] = useState(false);
   const initials = name
     .split(' ')
     .map((p) => p[0])
@@ -18,18 +19,20 @@ export function Avatar({ uri, name, size = 40 }: Props) {
     .slice(0, 2)
     .toUpperCase();
 
-  if (uri) {
+  if (uri && !failed) {
     return (
       <Image
         source={{ uri }}
-        style={{ width: size, height: size, borderRadius: size / 2 }}
+        style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: theme.colors.muted }}
         accessibilityLabel={`${name} avatar`}
+        onError={() => setFailed(true)}
       />
     );
   }
 
   return (
     <View
+      accessibilityLabel={`${name} avatar`}
       style={[
         styles.fallback,
         {

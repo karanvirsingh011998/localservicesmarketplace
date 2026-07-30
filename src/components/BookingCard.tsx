@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Text } from './Text';
 import { Badge } from './Badge';
+import { Card } from './Card';
 import type { Booking } from '@/mocks/data';
 
 type Props = {
@@ -21,18 +22,9 @@ const statusTone: Record<Booking['status'], 'default' | 'success' | 'warning' | 
 export function BookingCard({ booking, onPress }: Props) {
   const theme = useTheme();
   return (
-    <Pressable
+    <Card
       onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`${booking.serviceName} booking`}
-      style={[
-        styles.card,
-        theme.shadows.small,
-        {
-          backgroundColor: theme.colors.card,
-          borderRadius: theme.radius.lg,
-        },
-      ]}
+      accessibilityLabel={`${booking.serviceName}, ${booking.status.replace('_', ' ')}, ${booking.date} at ${booking.time}`}
     >
       <View style={styles.row}>
         <Text variant="title" style={{ flex: 1 }}>
@@ -41,7 +33,7 @@ export function BookingCard({ booking, onPress }: Props) {
         <Badge label={booking.status.replace('_', ' ')} tone={statusTone[booking.status]} />
       </View>
       <Text variant="caption" muted>
-        {booking.providerName}
+        {booking.customerName || booking.providerName}
       </Text>
       <Text variant="body">
         {booking.date} · {booking.time}
@@ -50,11 +42,10 @@ export function BookingCard({ booking, onPress }: Props) {
         {booking.address}
       </Text>
       <Text variant="subtitle">₹{booking.price}</Text>
-    </Pressable>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { padding: 16, gap: 6 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
 });

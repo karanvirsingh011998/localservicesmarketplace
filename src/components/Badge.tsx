@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
+import { withAlpha } from '@/theme/tokens';
 import { Text } from './Text';
 
 type Tone = 'default' | 'success' | 'warning' | 'danger';
@@ -14,11 +15,11 @@ export function Badge({ label, tone = 'default' }: Props) {
   const theme = useTheme();
   const bg =
     tone === 'success'
-      ? `${theme.colors.success}22`
+      ? withAlpha(theme.colors.success, 0.16)
       : tone === 'warning'
-        ? `${theme.colors.warning}22`
+        ? withAlpha(theme.colors.warning, 0.16)
         : tone === 'danger'
-          ? `${theme.colors.destructive}22`
+          ? withAlpha(theme.colors.destructive, 0.16)
           : theme.colors.accent;
   const fg =
     tone === 'success'
@@ -29,7 +30,17 @@ export function Badge({ label, tone = 'default' }: Props) {
           ? theme.colors.destructive
           : theme.colors.accentForeground;
   return (
-    <View style={[styles.badge, { backgroundColor: bg, borderRadius: theme.radius.pill }]}>
+    <View
+      style={[
+        styles.badge,
+        {
+          backgroundColor: bg,
+          borderRadius: theme.radius.pill,
+          paddingHorizontal: theme.spacing[2.5],
+          paddingVertical: theme.spacing[1],
+        },
+      ]}
+    >
       <Text variant="caption" color={fg} style={styles.text}>
         {label}
       </Text>
@@ -38,6 +49,6 @@ export function Badge({ label, tone = 'default' }: Props) {
 }
 
 const styles = StyleSheet.create({
-  badge: { paddingHorizontal: 10, paddingVertical: 4 },
+  badge: {},
   text: { textTransform: 'capitalize' },
 });

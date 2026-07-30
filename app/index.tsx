@@ -19,7 +19,12 @@ export default function Index() {
   }
 
   if (!hasOnboarded) return <Redirect href="/onboarding" />;
-  if (!isAuthenticated && role === 'guest') return <Redirect href="/(guest)" />;
+
+  if (!isAuthenticated) {
+    if (role === 'guest') return <Redirect href="/(guest)" />;
+    return <Redirect href="/welcome" />;
+  }
+
   if (role === 'provider') return <Redirect href="/(provider)" />;
   if (role === 'customer') return <Redirect href="/(customer)" />;
   return <Redirect href="/welcome" />;
