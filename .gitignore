@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Native
+ios/
+android/
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# IDE / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+*.swp
+.claude/
+
+# Logs / coverage
+*.log
+coverage/
+*.tsbuildinfo
